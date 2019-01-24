@@ -44,8 +44,7 @@
             this.winChartViewer1.Location = new System.Drawing.Point(171, 35);
             this.winChartViewer1.Name = "winChartViewer1";
             this.winChartViewer1.Size = new System.Drawing.Size(1229, 480);
-            this.winChartViewer1.TabIndex = 0;
-            this.winChartViewer1.TabStop = false;
+ 
             this.winChartViewer1.ViewPortChanged += new ChartDirector.WinViewPortEventHandler(this.winChartViewer1_ViewPortChanged);
             this.winChartViewer1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.winChartViewer1_MouseDown);
             this.winChartViewer1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.winChartViewer1_MouseMove);
@@ -82,8 +81,7 @@
             this.hScrollBar1.Name = "hScrollBar1";
             this.hScrollBar1.Size = new System.Drawing.Size(1438, 30);
             this.hScrollBar1.TabIndex = 3;
-            this.hScrollBar1.ValueChanged += new System.EventHandler(this.hScrollBar1_ValueChanged);
-            // 
+           // 
             // PointerPB
             // 
             this.PointerPB.AutoSize = true;
@@ -106,7 +104,6 @@
             this.zoomInPB.Text = "zoomInPB";
             this.zoomInPB.UseVisualStyleBackColor = true;
             this.zoomInPB.CheckedChanged += new System.EventHandler(this.zoomInPB_CheckedChanged);
-
             // 
             // zoomOutPB
             // 
@@ -119,10 +116,9 @@
             this.zoomOutPB.Text = "zoomOutPB";
             this.zoomOutPB.UseVisualStyleBackColor = true;
             this.zoomOutPB.CheckedChanged += new System.EventHandler(this.zoomOutPB_CheckedChanged);
-
             // 
             // Form1
-            // 
+            //  
             this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 21F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1438, 554);

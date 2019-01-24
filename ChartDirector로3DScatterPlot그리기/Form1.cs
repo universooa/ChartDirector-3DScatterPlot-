@@ -1,10 +1,10 @@
-﻿using System;
-using System.IO;
+﻿using ChartDirector;
+using System;
 using System.Data;
 using System.Data.OleDb;
 using System.Globalization;
+using System.IO;
 using System.Windows.Forms;
-using ChartDirector;
 
 namespace ChartDirector로3DScatterPlot그리기
 {
@@ -12,11 +12,12 @@ namespace ChartDirector로3DScatterPlot그리기
     {
         private double rotationAngle = 45;
         private double elevationAngle = 30;
+  
+
         private bool openFileFlag = false;
+
         private DataTable dt1;
-        private bool hasFinishedInitialization;
-
-
+        private SurfaceChart c;
 
         public Form1()
         {
@@ -25,16 +26,13 @@ namespace ChartDirector로3DScatterPlot그리기
             // Initialize the WinChartViewer
             initChartViewer(winChartViewer1);
 
-            // Can handle events now
-            hasFinishedInitialization = true;
-
         }
         //
         // Initialize the WinChartViewer
         //
         private void initChartViewer(WinChartViewer viewer)
-        { 
-           
+        {
+
             // Enable mouse wheel zooming by setting the zoom ratio to 1.1 per wheel event
             viewer.MouseWheelZoomRatio = 1.1;
             // Initially set the mouse usage to "Pointer" mode (Drag to Scroll mode)
@@ -59,11 +57,11 @@ namespace ChartDirector로3DScatterPlot그리기
             // changes based on the view port.
             updateControls(winChartViewer1);
 
-
-
             // Update the chart if necessary
             if (e.NeedUpdateChart)
+            {
                 drawChart(winChartViewer1);
+            }
         }
 
         //
@@ -71,7 +69,7 @@ namespace ChartDirector로3DScatterPlot그리기
         //
         private void updateControls(WinChartViewer viewer)
         {
-           
+
             // Update the scroll bar to reflect the view port position and width of the view port.
             hScrollBar1.Enabled = winChartViewer1.ViewPortWidth < 1;
             hScrollBar1.LargeChange = (int)Math.Ceiling(winChartViewer1.ViewPortWidth *
@@ -79,6 +77,7 @@ namespace ChartDirector로3DScatterPlot그리기
             hScrollBar1.SmallChange = (int)Math.Ceiling(hScrollBar1.LargeChange * 0.1);
             hScrollBar1.Value = (int)Math.Round(winChartViewer1.ViewPortLeft *
                 (hScrollBar1.Maximum - hScrollBar1.Minimum)) + hScrollBar1.Minimum;
+    
         }
 
 
@@ -93,71 +92,71 @@ namespace ChartDirector로3DScatterPlot그리기
                     dt1 = GetDataTableFromCsv(filename, false);
                 }
             }
-                    dt1.Rows[0][0] = dt1.Rows[0][1];
 
-                    
-                    double[] xData = new double[dt1.Rows.Count * dt1.Columns.Count];
-                    double[] yData = new double[dt1.Rows.Count * dt1.Columns.Count];
-                    double[] zData = new double[dt1.Rows.Count * dt1.Columns.Count];
+            double[] xData = new double[dt1.Rows.Count * dt1.Columns.Count];
+            double[] yData = new double[dt1.Rows.Count * dt1.Columns.Count];
+            double[] zData = new double[dt1.Rows.Count * dt1.Columns.Count];
 
-                    int temp = 0;
+            int temp = 0;
 
-                    for (int x = 0; x < dt1.Rows.Count; x++)
-                    {
-                        for (int y = 0; y < dt1.Columns.Count; y++)
-                        {
-                            xData[temp] = x;
-                            yData[temp] = y;
+            for (int x = 0; x < dt1.Rows.Count; x++)
+            {
+                for (int y = 0; y < dt1.Columns.Count; y++)
+                {
+                    xData[temp] = x;
+                    yData[temp] = y;
 
-                            zData[temp] = Convert.ToInt64(dt1.Rows[x][y]);
+                    zData[temp] = Convert.ToInt64(dt1.Rows[x][y]);
+                   
 
-                            temp += 1;
-                        }
-                    }
-             
-                    // Create a SurfaceChart object of size 720 x 600 pixels
-                    SurfaceChart c = new SurfaceChart(720, 600);
-
-
-            
-            
-
-                    // Set the center of the plot region at (330, 290), and set width x depth x height to
-                    // 360 x 360 x 270 pixels
-                    c.setPlotRegion(330, 290, 360, 360, 270);
-
-                    // Set the data to use to plot the chart
-                    c.setData(xData, yData, zData);
-
-                    // Spline interpolate data to a 80 x 80 grid for a smooth surface
-                    c.setInterpolation(80, 80);
-             
-                // Set the view angles
-                c.setViewAngle(elevationAngle, rotationAngle);
-
-                // Check if draw frame only during rotation
-                if (isDragging && DrawFrameOnRotate.Checked)
-                    c.setShadingMode(Chart.RectangularFrame);
-
-                // Add a color axis (the legend) in which the left center is anchored at (660, 270). Set
-                // the length to 200 pixels and the labels on the right side.
-                c.setColorAxis(650, 270, Chart.Left, 200, Chart.Right);
-
-                // Set the x, y and z axis titles using 10 points Arial Bold font
-                c.xAxis().setTitle("X", "Arial Bold", 15);
-                c.yAxis().setTitle("Y", "Arial Bold", 15);
-
-                // Set axis label font
-                c.xAxis().setLabelStyle("Arial", 10);
-                c.yAxis().setLabelStyle("Arial", 10);
-                c.zAxis().setLabelStyle("Arial", 10);
-                c.colorAxis().setLabelStyle("Arial", 10);
-
-                // Output the chart
-                viewer.Chart = c;
+                    temp += 1;
+                }
             }
 
-        
+            c = null;
+            // Create a SurfaceChart object of size 720 x 600 pixels
+             c = new SurfaceChart(720, 600);
+
+            // Set the center of the plot region at (330, 290), 
+            //and set width x depth x height to
+            // 360 x 360 x 270 pixels
+            c.setPlotRegion(330, 290, 360, 360, 270);
+
+            // Set the data to use to plot the chart
+            c.setData(xData, yData, zData);
+
+            // Spline interpolate data to a 80 x 80 grid for a smooth surface
+            c.setInterpolation(80, 80);
+
+            // Set the view angles
+            c.setViewAngle(elevationAngle, rotationAngle);
+
+            // Check if draw frame only during rotation
+            if (isDragging && DrawFrameOnRotate.Checked)
+            {
+                c.setShadingMode(Chart.RectangularFrame);
+            }
+
+            // Add a color axis (the legend) in which the left center is anchored
+            //at (650, 270). Set the length to 200 pixels and the labels on the
+            //right side.
+            c.setColorAxis(650, 270, Chart.Left, 200, Chart.Right);
+
+            // Set the x, y and z axis titles using 10 points Arial Bold font
+            c.xAxis().setTitle("X", "Arial Bold", 15);
+            c.yAxis().setTitle("Y", "Arial Bold", 15);
+
+            // Set axis label font
+            c.xAxis().setLabelStyle("Arial", 10);
+            c.yAxis().setLabelStyle("Arial", 10);
+            c.zAxis().setLabelStyle("Arial", 10);
+            c.colorAxis().setLabelStyle("Arial", 10);
+
+            // Output the chart
+            viewer.Chart = c;
+        }
+
+
 
         // keep track of the last mouse position to compute mouse movement
         private int lastMouseX = -1;
@@ -202,26 +201,11 @@ namespace ChartDirector로3DScatterPlot그리기
             }
         }
 
-        private void hScrollBar1_ValueChanged(object sender, EventArgs e)
-        {
-            // When the view port is changed (user drags on the chart to scroll), the scroll bar will get
-            // updated. When the scroll bar changes (eg. user drags on the scroll bar), the view port will
-            // get updated. This creates an infinite loop. To avoid this, the scroll bar can update the 
-            // view port only if the view port is not updating the scroll bar.
-            if (hasFinishedInitialization && !winChartViewer1.IsInViewPortChangedEvent)
-            {
-                // Set the view port based on the scroll bar
-                winChartViewer1.ViewPortLeft = ((double)(hScrollBar1.Value - hScrollBar1.Minimum))
-                    / (hScrollBar1.Maximum - hScrollBar1.Minimum);
 
-                // Trigger a view port changed event to update the chart
-                winChartViewer1.updateViewPort(true, false);
-            }
-        }
         private void button1_Click(object sender, EventArgs e)
         {
             openFileFlag = false;
-          
+
         }
 
         //
@@ -230,16 +214,20 @@ namespace ChartDirector로3DScatterPlot그리기
         private void zoomInPB_CheckedChanged(object sender, EventArgs e)
         {
             if (((RadioButton)sender).Checked)
+            {
                 winChartViewer1.MouseUsage = WinChartMouseUsage.ZoomIn;
+            }
         }
-
         //
         // Zoom Out button event handler
         //
         private void zoomOutPB_CheckedChanged(object sender, EventArgs e)
         {
             if (((RadioButton)sender).Checked)
+            {
                 winChartViewer1.MouseUsage = WinChartMouseUsage.ZoomOut;
+            
+            }
         }
 
         //
@@ -253,6 +241,7 @@ namespace ChartDirector로3DScatterPlot그리기
 
         static DataTable GetDataTableFromCsv(string path, bool isFirstRowHeader)
         {
+            Console.WriteLine(path);
             string header = isFirstRowHeader ? "Yes" : "No";
 
             string pathOnly = Path.GetDirectoryName(path);
@@ -267,13 +256,9 @@ namespace ChartDirector로3DScatterPlot그리기
             using (OleDbDataAdapter adapter = new OleDbDataAdapter(command))
             {
                 DataTable dataTable = new DataTable();
-                dataTable.Locale = CultureInfo.CurrentCulture;
                 adapter.Fill(dataTable);
                 return dataTable;
             }
         }
     }
-
-
-
 }
